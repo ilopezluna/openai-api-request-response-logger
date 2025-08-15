@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Capture Gateway</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Capture Gateway</h1>
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn btn-secondary">🌙</button>
+                <button id="export-btn" class="btn btn-primary">Export NDJSON</button>
+            </div>
+        </header>
+
+        <div class="filters">
+            <div class="filter-row">
+                <input type="text" id="search" placeholder="Search requests..." class="filter-input">
+                <select id="provider-filter" class="filter-select">
+                    <option value="">All Providers</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="ollama">Ollama</option>
+                    <option value="dmr">DMR</option>
+                </select>
+                <input type="text" id="model-filter" placeholder="Model..." class="filter-input">
+                <select id="status-filter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="200">200 OK</option>
+                    <option value="400">400 Bad Request</option>
+                    <option value="401">401 Unauthorized</option>
+                    <option value="500">500 Server Error</option>
+                </select>
+                <button id="clear-filters" class="btn btn-secondary">Clear</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <span id="total-count">0 requests</span>
+            <span id="loading" class="loading hidden">Loading...</span>
+        </div>
+
+        <div class="table-container">
+            <table id="requests-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Provider</th>
+                        <th>Method</th>
+                        <th>URL</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                        <th>Model</th>
+                        <th>Stream</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requests-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+            <span id="page-info">Page 1</span>
+            <button id="next-page" class="btn btn-secondary">Next</button>
+        </div>
+    </div>
+
+    <!-- Modal for request details -->
+    <div id="detail-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Request Details</h2>
+                <button id="close-modal" class="btn btn-secondary">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="request">Request</button>
+                    <button class="tab-btn" data-tab="response">Response</button>
+                    <button class="tab-btn" data-tab="stream" id="stream-tab" style="display: none;">Stream</button>
+                </div>
+                
+                <div id="overview-tab" class="tab-content active">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>ID:</label>
+                            <span id="detail-id"></span>
+                            <button class="copy-btn" data-copy="detail-id">📋</button>
+                        </div>
+                        <div class="detail-item">
+                            <label>Provider:</label>
+                            <span id="detail-provider"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Method:</label>
+                            <span id="detail-method"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>URL:</label>
+                            <span id="detail-url"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Status:</label>
+                            <span id="detail-status"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Duration:</label>
+                            <span id="detail-duration"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Model:</label>
+                            <span id="detail-model"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Request Size:</label>
+                            <span id="detail-req-size"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Response Size:</label>
+                            <span id="detail-res-size"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="request-tab" class="tab-content">
+                    <div class="json-container">
+                        <button class="copy-btn" data-copy="request-body">📋 Copy</button>
+                        <pre id="request-body"></pre>
+                    </div>
+                </div>
+
+                <div id="response-tab" class="tab-content">
+                    <div class="json-container">
+                        <button class="copy-btn" data-copy="response-body">📋 Copy</button>
+                        <pre id="response-body"></pre>
+                    </div>
+                </div>
+
+                <div id="stream-tab-content" class="tab-content">
+                    <div class="stream-controls">
+                        <button id="play-stream" class="btn btn-primary">▶ Play Stream</button>
+                        <button id="stop-stream" class="btn btn-secondary" disabled>⏹ Stop</button>
+                    </div>
+                    <div class="stream-output">
+                        <pre id="stream-content"></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-request" class="btn btn-danger">Delete</button>
+                <button id="close-modal-btn" class="btn btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
